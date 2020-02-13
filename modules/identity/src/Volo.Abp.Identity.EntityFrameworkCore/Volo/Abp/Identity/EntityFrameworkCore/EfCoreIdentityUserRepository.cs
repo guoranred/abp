@@ -152,7 +152,7 @@ namespace Volo.Abp.Identity.EntityFrameworkCore
                 .FirstOrDefaultAsync(
                     u => u.PhoneNumber == phoneNumber,
                     GetCancellationToken(cancellationToken)
-                ).ConfigureAwait(false);
+                );
         }
 
         public override IQueryable<IdentityUser> WithDetails()
