@@ -65,5 +65,11 @@ namespace Volo.Abp.Identity
             string filter = null,
             CancellationToken cancellationToken = default
         );
+
+        Task<IdentityUser> FindByPhoneNumberAsync(
+            string phoneNumber,
+            bool includeDetails = false,
+            CancellationToken cancellationToken = default
+        );
     }
 }
