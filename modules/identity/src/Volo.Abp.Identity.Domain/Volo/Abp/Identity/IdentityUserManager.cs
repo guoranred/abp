@@ -18,6 +18,8 @@ namespace Volo.Abp.Identity
         protected override CancellationToken CancellationToken => _cancellationTokenProvider.Token;
 
         private readonly ICancellationTokenProvider _cancellationTokenProvider;
+        
+        private readonly IIdentityUserRepository _userRepository;
 
         public IdentityUserManager(
             IdentityUserStore store,
@@ -29,7 +31,8 @@ namespace Volo.Abp.Identity
             IdentityErrorDescriber errors,
             IServiceProvider services,
             ILogger<IdentityUserManager> logger,
-            ICancellationTokenProvider cancellationTokenProvider)
+            ICancellationTokenProvider cancellationTokenProvider,
+            IIdentityUserRepository userRepository)
             : base(
                   store,
                   optionsAccessor,
@@ -42,6 +45,7 @@ namespace Volo.Abp.Identity
                   logger)
         {
             _cancellationTokenProvider = cancellationTokenProvider;
+            _userRepository = userRepository;
         }
 
         public virtual async Task<IdentityUser> GetByIdAsync(Guid id)
@@ -59,7 +63,7 @@ namespace Volo.Abp.Identity
         {
             Check.NotNull(user, nameof(user));
             Check.NotNull(roleNames, nameof(roleNames));
-            
+
             var currentRoleNames = await GetRolesAsync(user);
 
             var result = await RemoveFromRolesAsync(user, currentRoleNames.Except(roleNames).Distinct());
@@ -76,5 +80,18 @@ namespace Volo.Abp.Identity
 
             return IdentityResult.Success;
         }
-    }
-}
+        
+        public virtual async Task<IdentityUser> FindByPhoneNumberAsync(string phoneNumber)
+        {
+            return await _userRepository.FindByPhoneNumberAsync(phoneNumber);
+        }
+
+        public virtual async Task<List<IdentityUser>> GetListAsync()
+        {
+            return await _userRepository.GetListAsync();
+        }
+
+        public virtual async Task<List<IdentityRole>> GetRolesAsync(Guid id)
+        {
+            return await _userRepository.GetRolesAsync(id);
+        }
