@@ -142,6 +142,18 @@ namespace Volo.Abp.Identity.EntityFrameworkCore
                 )
                 .LongCountAsync(GetCancellationToken(cancellationToken));
         }
+        
+        public virtual async Task<IdentityUser> FindByPhoneNumberAsync(
+            string phoneNumber,
+            bool includeDetails = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .FirstOrDefaultAsync(
+                    u => u.PhoneNumber == phoneNumber,
+                    GetCancellationToken(cancellationToken)
+                ).ConfigureAwait(false);
+        }
 
         public override IQueryable<IdentityUser> WithDetails()
         {
